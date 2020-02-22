@@ -2,7 +2,7 @@ package commands
 
 import (
 	"errors"
-	"siiMod/engine"
+	"brainfuck-interpreter/engine"
 )
 
 func NewDecrementPointer(service engine.MemoryAccess) *decrementPointer {

@@ -6,8 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"siiMod/engine"
-	"siiMod/utils"
+	"brainfuck-interpreter/engine"
+	"brainfuck-interpreter/utils"
 )
 
 func main() {

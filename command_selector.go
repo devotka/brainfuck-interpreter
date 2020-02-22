@@ -1,9 +1,9 @@
 package main
 
 import (
-	"siiMod/commands"
-	"siiMod/engine"
-	"siiMod/utils"
+	"brainfuck-interpreter/commands"
+	"brainfuck-interpreter/engine"
+	"brainfuck-interpreter/utils"
 )
 
 type commandSelector struct {

@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"siiMod/engine"
-	"siiMod/utils"
+	"brainfuck-interpreter/engine"
+	"brainfuck-interpreter/utils"
 )
 
 var _ engine.Command = (*putChar)(nil)

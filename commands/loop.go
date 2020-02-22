@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"siiMod/engine"
+	"brainfuck-interpreter/engine"
 )
 
 var _ engine.LocalScope = (*loop)(nil)
