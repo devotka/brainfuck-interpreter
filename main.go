@@ -1,13 +1,12 @@
 package main
 
 import (
+	"brainfuck-interpreter/engine"
+	"brainfuck-interpreter/utils"
 	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
-	"brainfuck-interpreter/engine"
-	"brainfuck-interpreter/utils"
 )
 
 func main() {
@@ -23,7 +22,6 @@ func main() {
 	case "-c":
 		err = readFromConsole()
 	case "-f":
-
 		if len(args) < 2 {
 			fmt.Println("Please give a file path")
 			return
@@ -32,8 +30,6 @@ func main() {
 		file := args[1]
 
 		err = readFromFile(file)
-	default:
-		loadTestData()
 	}
 
 	if err != nil {
@@ -57,6 +53,10 @@ func readFromConsole() error {
 			break
 		}
 
+		if err != nil {
+			return err
+		}
+
 		symbol := string(c)
 		command := commandSelector.selectCommand(symbol)
 		if command != nil {
@@ -70,20 +70,31 @@ func readFromConsole() error {
 }
 
 func readFromFile(path string) error {
+	filReader, err := utils.NewFileReader(path)
+	if err != nil {
+		return err
+	}
+
+	defer filReader.Close()
+
 	ma := engine.NewMemoryAccess()
 	scopeService := engine.NewLocalScopeService()
 	commandSelector := commandSelector{
 		memoryAccess: ma,
 		writer:       utils.NewConsoleWriter(),
-		reader:       bufio.NewReader(os.Stdin),
+		reader:       filReader,
 	}
 
-	content, err := ioutil.ReadFile(path)
-	if err != nil {
-		return err
-	}
-	for _, c := range content {
+	for {
 
+		c, err := filReader.ReadByte()
+		if err == io.EOF {
+			break
+		}
+		
+		if err != nil {
+			return err
+		}
 		symbol := string(c)
 		command := commandSelector.selectCommand(symbol)
 		if command != nil {
@@ -92,5 +103,6 @@ func readFromFile(path string) error {
 			}
 		}
 	}
+
 	return nil
 }

@@ -5,26 +5,28 @@ import (
 	"brainfuck-interpreter/utils"
 )
 
-var _ engine.Command = (*putChar)(nil)
+var _ engine.Command = (*PutChar)(nil)
 
-func NewPutChar(memoryAccess engine.MemoryAccess, reader utils.ByteReader) *putChar {
-	return &putChar{
+func NewPutChar(memoryAccess engine.MemoryAccess, reader utils.ByteReader) *PutChar {
+
+
+	return &PutChar{
 		memoryAccess: memoryAccess,
 		byteReader:   reader,
 	}
 }
 
-type putChar struct {
+type PutChar struct {
+	value        byte
 	memoryAccess engine.MemoryAccess
 	byteReader   utils.ByteReader
 }
 
-func (s *putChar) Execute() error {
-	readVal, err := s.byteReader.ReadByte()
+func (s *PutChar) Execute() error {
+	value, err := s.byteReader.ReadByte()
 	if err != nil {
 		return err
 	}
-
-	s.memoryAccess.SetCellValue(int(readVal))
+	s.memoryAccess.SetCellValue(int(value))
 	return nil
 }
