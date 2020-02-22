@@ -11,25 +11,31 @@ func InterpretCommand(command Command, scopeService LocalScopeService, ma Memory
 		scopeService.Push(value)
 
 	case LocalScopeClose:
-		scope := scopeService.Pop()
-		if scopeService.Get() == nil {
-
-			err := scope.Execute()
-			if err != nil {
-				return err
-			}
+		err := scopeService.Pop().Execute()
+		if err != nil {
+			return err
 		}
 	default:
 		if scope != nil {
 			scope.Append(command)
-			return nil
+		}
+		if canExecuteCommand(scope) {
+			err := command.Execute()
+			if err != nil {
+				return err
+			}
 		}
 
-		err := command.Execute()
-		if err != nil {
-			return err
-		}
+
 	}
 
 	return nil
+}
+
+func canExecuteCommand(scope LocalScope) bool {
+	if scope == nil {
+		return true
+	}
+
+	return scope.CanExecutePartially()
 }

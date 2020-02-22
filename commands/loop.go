@@ -8,6 +8,7 @@ var _ engine.LocalScope = (*loop)(nil)
 
 func NewLoop(memoryAccess engine.MemoryAccess) *loop {
 	return &loop{
+		canExecutePartially: memoryAccess.GetCellValue() != 0,
 		memoryAccess: memoryAccess,
 	}
 }
@@ -15,11 +16,12 @@ func NewLoop(memoryAccess engine.MemoryAccess) *loop {
 type loop struct {
 	memoryAccess engine.MemoryAccess
 	steps        []engine.Command
+	canExecutePartially bool
 }
 
-func (w *loop) Execute() error {
-	for w.memoryAccess.GetCellValue() != 0 {
-		for _, c := range w.steps {
+func (l *loop) Execute() error {
+	for l.memoryAccess.GetCellValue() != 0 {
+		for _, c := range l.steps {
 			err := c.Execute()
 
 			if err != nil {
@@ -31,6 +33,9 @@ func (w *loop) Execute() error {
 	return nil
 }
 
-func (w *loop) Append(s engine.Command) {
-	w.steps = append(w.steps, s)
+func (l *loop) Append(s engine.Command) {
+	l.steps = append(l.steps, s)
+}
+func (l *loop) CanExecutePartially() bool {
+	return l.canExecutePartially
 }
