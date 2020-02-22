@@ -1,6 +1,10 @@
 package engine
 
-func InterpretCommand(command Command, scopeService LocalScopeService, ma MemoryAccess) error {
+import (
+	"errors"
+)
+
+func InterpretCommand(command Command, scopeService LocalScopeService) error {
 	scope := scopeService.Get()
 
 	switch value := command.(type) {
@@ -11,10 +15,12 @@ func InterpretCommand(command Command, scopeService LocalScopeService, ma Memory
 		scopeService.Push(value)
 
 	case LocalScopeClose:
-		err := scopeService.Pop().Execute()
-		if err != nil {
-			return err
+		if scope != nil {
+			return scopeService.Pop().Execute()
 		}
+
+		return errors.New("wrong input - missing loop opening bracket")
+
 	default:
 		if scope != nil {
 			scope.Append(command)
