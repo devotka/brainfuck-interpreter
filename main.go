@@ -47,24 +47,8 @@ func readFromConsole() error {
 		reader:       stdinReader,
 	}
 
-	for {
-		c, err := stdinReader.ReadByte()
-		if err == io.EOF {
-			break
-		}
 
-		if err != nil {
-			return err
-		}
-
-		symbol := string(c)
-		command := commandSelector.selectCommand(symbol)
-		if command != nil {
-			if err := engine.InterpretCommand(command, scopeService, ma); err != nil {
-				return err
-			}
-		}
-	}
+	execute(commandSelector, stdinReader, scopeService)
 
 	return nil
 }
@@ -85,20 +69,28 @@ func readFromFile(path string) error {
 		reader:       filReader,
 	}
 
+	execute(commandSelector, filReader, scopeService)
+
+	return nil
+}
+
+func execute(commandSelector commandSelector, reader utils.ByteReader, scopeService engine.LocalScopeService, ) error {
+
 	for {
 
-		c, err := filReader.ReadByte()
+		c, err := reader.ReadByte()
 		if err == io.EOF {
 			break
 		}
-		
+
 		if err != nil {
 			return err
 		}
+
 		symbol := string(c)
 		command := commandSelector.selectCommand(symbol)
 		if command != nil {
-			if err := engine.InterpretCommand(command, scopeService, ma); err != nil {
+			if err := engine.InterpretCommand(command, scopeService); err != nil {
 				return err
 			}
 		}
