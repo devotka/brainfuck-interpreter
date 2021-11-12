@@ -1,5 +1,7 @@
 # Brainfuck interpreter
 
+OOP / "interfaced" variation of brrainfuck interpreter interpreter.
+
 ## Application execution and commands
 
 Program consumes console input and executes interprets commands. 
